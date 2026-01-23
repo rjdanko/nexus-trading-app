@@ -6,242 +6,242 @@ import { useRouter } from 'next/navigation'
 import { Mail, Lock, Eye, EyeOff, Hexagon, ArrowRight, Github, Chrome } from 'lucide-react'
 
 export default function LoginPage() {
-    const [isLogin, setIsLogin] = useState(true)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [showPassword, setShowPassword] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState('')
-    const [message, setMessage] = useState('')
+  const [isLogin, setIsLogin] = useState(true)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
 
-    const router = useRouter()
-    const supabase = createClient()
+  const router = useRouter()
+  const supabase = createClient()
 
-    const handleAuth = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
-        setError('')
-        setMessage('')
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
+    setMessage('')
 
-        try {
-            if (isLogin) {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                })
-                if (error) throw error
-                router.push('/')
-            } else {
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        emailRedirectTo: `${window.location.origin}/auth/callback`,
-                    },
-                })
-                if (error) throw error
-                setMessage('Check your email for the confirmation link!')
-            }
-        } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-            setError(errorMessage)
-        } finally {
-            setIsLoading(false)
-        }
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        if (error) throw error
+        router.push('/')
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        })
+        if (error) throw error
+        setMessage('Check your email for the confirmation link!')
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-    const handleOAuthLogin = async (provider: 'google' | 'github') => {
-        setIsLoading(true)
-        try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider,
-                options: {
-                    redirectTo: `${window.location.origin}/auth/callback`,
-                },
-            })
-            if (error) throw error
-        } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-            setError(errorMessage)
-            setIsLoading(false)
-        }
+  const handleOAuthLogin = async (provider: 'google' | 'github') => {
+    setIsLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      setIsLoading(false)
     }
+  }
 
-    return (
-        <div className="login-page">
-            {/* Background Effects */}
-            <div className="bg-grid"></div>
-            <div className="bg-glow glow-1"></div>
-            <div className="bg-glow glow-2"></div>
-            <div className="bg-glow glow-3"></div>
+  return (
+    <div className="login-page">
+      {/* Background Effects */}
+      <div className="bg-grid"></div>
+      <div className="bg-glow glow-1"></div>
+      <div className="bg-glow glow-2"></div>
+      <div className="bg-glow glow-3"></div>
 
-            {/* Login Card */}
-            <div className="login-container">
-                <div className="login-card glass-card-elevated">
-                    {/* Header */}
-                    <div className="login-header">
-                        <div className="logo">
-                            <div className="logo-icon">
-                                <Hexagon size={32} strokeWidth={1.5} />
-                            </div>
-                            <div className="logo-text">
-                                <span className="logo-name">NEXUS</span>
-                                <span className="logo-tagline">Trading Hub</span>
-                            </div>
-                        </div>
-                        <h1 className="login-title">
-                            {isLogin ? 'Welcome back' : 'Create account'}
-                        </h1>
-                        <p className="login-subtitle">
-                            {isLogin
-                                ? 'Sign in to continue to your trading dashboard'
-                                : 'Start your journey to better trading'
-                            }
-                        </p>
-                    </div>
+      {/* Login Card */}
+      <div className="login-container">
+        <div className="login-card glass-card-elevated">
+          {/* Header */}
+          <div className="login-header">
+            <div className="logo">
+              <div className="logo-icon">
+                <Hexagon size={32} strokeWidth={1.5} />
+              </div>
+              <div className="logo-text">
+                <span className="logo-name">NEXUS</span>
+                <span className="logo-tagline">Trading Hub</span>
+              </div>
+            </div>
+            <h1 className="login-title">
+              {isLogin ? 'Welcome back' : 'Create account'}
+            </h1>
+            <p className="login-subtitle">
+              {isLogin
+                ? 'Sign in to continue to your trading dashboard'
+                : 'Start your journey to better trading'
+              }
+            </p>
+          </div>
 
-                    {/* OAuth Buttons */}
-                    <div className="oauth-buttons">
-                        <button
-                            className="oauth-btn"
-                            onClick={() => handleOAuthLogin('google')}
-                            disabled={isLoading}
-                        >
-                            <Chrome size={18} />
-                            <span>Continue with Google</span>
-                        </button>
-                        <button
-                            className="oauth-btn"
-                            onClick={() => handleOAuthLogin('github')}
-                            disabled={isLoading}
-                        >
-                            <Github size={18} />
-                            <span>Continue with GitHub</span>
-                        </button>
-                    </div>
+          {/* OAuth Buttons */}
+          <div className="oauth-buttons">
+            <button
+              className="oauth-btn"
+              onClick={() => handleOAuthLogin('google')}
+              disabled={isLoading}
+            >
+              <Chrome size={18} />
+              <span>Continue with Google</span>
+            </button>
+            <button
+              className="oauth-btn"
+              onClick={() => handleOAuthLogin('github')}
+              disabled={isLoading}
+            >
+              <Github size={18} />
+              <span>Continue with GitHub</span>
+            </button>
+          </div>
 
-                    {/* Divider */}
-                    <div className="divider">
-                        <span>or continue with email</span>
-                    </div>
+          {/* Divider */}
+          <div className="divider">
+            <span>or continue with email</span>
+          </div>
 
-                    {/* Form */}
-                    <form onSubmit={handleAuth} className="login-form">
-                        <div className="form-group">
-                            <label className="form-label">Email</label>
-                            <div className="input-wrapper">
-                                <Mail size={18} className="input-icon" />
-                                <input
-                                    type="email"
-                                    className="input-field with-icon"
-                                    placeholder="trader@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Password</label>
-                            <div className="input-wrapper">
-                                <Lock size={18} className="input-icon" />
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    className="input-field with-icon"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    minLength={6}
-                                />
-                                <button
-                                    type="button"
-                                    className="password-toggle"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {isLogin && (
-                            <div className="forgot-password">
-                                <button type="button" className="link-btn">
-                                    Forgot password?
-                                </button>
-                            </div>
-                        )}
-
-                        {error && (
-                            <div className="error-message">
-                                {error}
-                            </div>
-                        )}
-
-                        {message && (
-                            <div className="success-message">
-                                {message}
-                            </div>
-                        )}
-
-                        <button
-                            type="submit"
-                            className="submit-btn btn-primary"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <span className="loading-spinner"></span>
-                            ) : (
-                                <>
-                                    <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
-                                    <ArrowRight size={18} />
-                                </>
-                            )}
-                        </button>
-                    </form>
-
-                    {/* Toggle */}
-                    <div className="toggle-auth">
-                        <span>
-                            {isLogin ? "Don't have an account?" : 'Already have an account?'}
-                        </span>
-                        <button
-                            type="button"
-                            className="link-btn"
-                            onClick={() => {
-                                setIsLogin(!isLogin)
-                                setError('')
-                                setMessage('')
-                            }}
-                        >
-                            {isLogin ? 'Sign up' : 'Sign in'}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Features */}
-                <div className="features-section">
-                    <div className="feature animate-fade-in stagger-1">
-                        <span className="feature-icon">📊</span>
-                        <span className="feature-text">Risk Calculator</span>
-                    </div>
-                    <div className="feature animate-fade-in stagger-2">
-                        <span className="feature-icon">📝</span>
-                        <span className="feature-text">Trade Journal</span>
-                    </div>
-                    <div className="feature animate-fade-in stagger-3">
-                        <span className="feature-icon">📈</span>
-                        <span className="feature-text">Analytics</span>
-                    </div>
-                    <div className="feature animate-fade-in stagger-4">
-                        <span className="feature-icon">📰</span>
-                        <span className="feature-text">Market News</span>
-                    </div>
-                </div>
+          {/* Form */}
+          <form onSubmit={handleAuth} className="login-form">
+            <div className="form-group">
+              <label className="form-label">Email</label>
+              <div className="input-wrapper">
+                <Mail size={18} className="input-icon" />
+                <input
+                  type="email"
+                  className="input-field with-icon"
+                  placeholder="trader@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
-            <style jsx>{`
+            <div className="form-group">
+              <label className="form-label">Password</label>
+              <div className="input-wrapper">
+                <Lock size={18} className="input-icon" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  className="input-field with-icon with-action"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {isLogin && (
+              <div className="forgot-password">
+                <button type="button" className="link-btn">
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="success-message">
+                {message}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="submit-btn btn-primary"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading-spinner"></span>
+              ) : (
+                <>
+                  <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Toggle */}
+          <div className="toggle-auth">
+            <span>
+              {isLogin ? "Don't have an account?" : 'Already have an account?'}
+            </span>
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => {
+                setIsLogin(!isLogin)
+                setError('')
+                setMessage('')
+              }}
+            >
+              {isLogin ? 'Sign up' : 'Sign in'}
+            </button>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="features-section">
+          <div className="feature animate-fade-in stagger-1">
+            <span className="feature-icon">📊</span>
+            <span className="feature-text">Risk Calculator</span>
+          </div>
+          <div className="feature animate-fade-in stagger-2">
+            <span className="feature-icon">📝</span>
+            <span className="feature-text">Trade Journal</span>
+          </div>
+          <div className="feature animate-fade-in stagger-3">
+            <span className="feature-icon">📈</span>
+            <span className="feature-text">Analytics</span>
+          </div>
+          <div className="feature animate-fade-in stagger-4">
+            <span className="feature-icon">📰</span>
+            <span className="feature-text">Market News</span>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
         .login-page {
           min-height: 100vh;
           display: flex;
@@ -460,23 +460,35 @@ export default function LoginPage() {
         }
 
         .input-field.with-icon {
-          padding-left: 46px;
+          padding-left: 52px;
+        }
+
+        .input-field.with-action {
+          padding-right: 52px;
         }
 
         .password-toggle {
           position: absolute;
           right: 14px;
-          top: 50%;
-          transform: translateY(-50%);
+          top: 0;
+          bottom: 0;
+          margin: auto;
+          height: 32px;
+          width: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           background: none;
           border: none;
           color: var(--color-steel);
           cursor: pointer;
-          transition: color var(--transition-fast);
+          border-radius: var(--radius-sm);
+          transition: all var(--transition-fast);
         }
 
         .password-toggle:hover {
           color: var(--color-pearl);
+          background: rgba(255, 255, 255, 0.05);
         }
 
         .forgot-password {
@@ -581,6 +593,7 @@ export default function LoginPage() {
           color: var(--color-silver);
         }
       `}</style>
-        </div>
-    )
+    </div>
+  )
 }
+
